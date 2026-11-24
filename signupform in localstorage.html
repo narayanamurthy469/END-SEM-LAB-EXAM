@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup and Login</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #e6e6e6;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .container {
+            background: white;
+            width: 350px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        #message {
+            color: green;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Signup Form</h2>
+
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="email" id="email" placeholder="Enter Email">
+        <input type="password" id="password" placeholder="Enter Password">
+
+        <button onclick="register()">Register</button>
+
+        <hr>
+
+        <h2>Login Form</h2>
+
+        <input type="email" id="loginEmail" placeholder="Enter Email">
+        <input type="password" id="loginPassword" placeholder="Enter Password">
+
+        <button onclick="login()">Login</button>
+
+        <p id="message"></p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <h2>Registered Users</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+
+        <tbody id="userTable"></tbody>
+    </table>
+
+    <script>
+
+        // Register Function
+        function register() {
+
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            if (name === "" || email === "" || password === "") {
+                alert("Please fill all fields");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+
+            let existingUser = users.find(user => user.email === email);
+
+            if (existingUser) {
+                alert("Email already registered");
+                return;
+            }
+
+            let user = {
+                name: name,
+                email: email,
+                password: password
+            };
+
+            users.push(user);
+
+            localStorage.setItem("users", JSON.stringify(users));
+
+            alert("Registration Successful!");
+
+            displayUsers();
+
+            document.getElementById("name").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("password").value = "";
+        }
+
+        // Login Function
+        function login() {
+
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+
+            let user = users.find(
+                u => u.email === email && u.password === password
+            );
+
+            if (user) {
+                document.getElementById("message").innerHTML =
+                    "Welcome " + user.name + "! Login Successful.";
+            }
+            else {
+                document.getElementById("message").innerHTML =
+                    "Invalid Email or Password";
+            }
+        }
+
+        // Display Registered Users
+        function displayUsers() {
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+
+            let table = document.getElementById("userTable");
+
+            table.innerHTML = "";
+
+            users.forEach(user => {
+
+                let row = table.insertRow();
+
+                row.insertCell(0).textContent = user.name;
+                row.insertCell(1).textContent = user.email;
+                row.insertCell(2).textContent = user.password;
+
+            });
+        }
+
+        // Logout Function
+        function logout() {
+            document.getElementById("message").innerHTML =
+                "Logged out successfully";
+        }
+
+        // Display users when page loads
+        displayUsers();
+
+    </script>
+
+</body>
+</html>
